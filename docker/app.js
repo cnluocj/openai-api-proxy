@@ -147,31 +147,32 @@ app.all(`*`, async (req, res) => {
           await process_buffer(res);  
         }else
         {
-          if( moderation && mdClient )
-          {
-            try {
-              let data_array = JSON.parse(data);
-              const char = data_array.choices[0]?.delta?.content;
-              if( char ) sentence += char;
-              // console.log("sentence",sentence );
-              if( char == '。' || char == '？' || char == '！' || char == "\n" )
-              {
-                // 将 sentence 送审
-                console.log("遇到句号，将句子放入缓冲区", sentence);
-                data_array.choices[0].delta.content = sentence;
-                sentence = "";
-                sentence_buffer.push(JSON.stringify(data_array));
-                await process_buffer(res);
-              }
-            } catch (error) {
-              // 因为开头已经处理的了 [DONE] 的情况，这里应该不会出现无法解析json的情况 
-              console.log( "error", error );
-            }   
-          }else
-          {
-            // 如果没有文本审核参数或者设置，直接输出
-            res.write("data: "+data+"\n\n" );  
-          }
+          res.write("data: "+data+"\n\n" );  
+          // if( moderation && mdClient )
+          // {
+          //   try {
+          //     let data_array = JSON.parse(data);
+          //     const char = data_array.choices[0]?.delta?.content;
+          //     if( char ) sentence += char;
+          //     // console.log("sentence",sentence );
+          //     if( char == '。' || char == '？' || char == '！' || char == "\n" )
+          //     {
+          //       // 将 sentence 送审
+          //       console.log("遇到句号，将句子放入缓冲区", sentence);
+          //       data_array.choices[0].delta.content = sentence;
+          //       sentence = "";
+          //       sentence_buffer.push(JSON.stringify(data_array));
+          //       await process_buffer(res);
+          //     }
+          //   } catch (error) {
+          //     // 因为开头已经处理的了 [DONE] 的情况，这里应该不会出现无法解析json的情况 
+          //     console.log( "error", error );
+          //   }   
+          // }else
+          // {
+          //   // 如果没有文本审核参数或者设置，直接输出
+          //   res.write("data: "+data+"\n\n" );  
+          // }
         }
       }
   };
